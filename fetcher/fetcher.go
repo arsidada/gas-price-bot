@@ -16,6 +16,20 @@ const URL = "https://www.caa.ca/wp/wp-admin/admin-ajax.php"
 //go:embed locations.json
 var locations []byte
 
+func Locations() ([]string, error) {
+	mappedLocations := make(map[string]interface{})
+	err := json.Unmarshal(locations, &mappedLocations)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read local locations mapping: %v", err)
+	}
+
+	locations := make([]string, 0)
+	for location := range mappedLocations {
+		locations = append(locations, location)
+	}
+	return locations, nil
+}
+
 func FetchPrice(location string) (string, error) {
 	mappedLocations := make(map[string]interface{})
 	err := json.Unmarshal(locations, &mappedLocations)
