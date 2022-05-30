@@ -23,11 +23,13 @@ func StartServer() error {
 func priceHandler(c *gin.Context) {
 	location := c.Param("location")
 	if location == "" {
-		c.String(http.StatusBadRequest, "location parameter not set")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "location parameter not set"})
+		return
 	}
 	price, err := fetcher.FetchPrice(strings.ToUpper(location))
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, gin.H{
 		"price": price,
